@@ -1,6 +1,7 @@
+%% puts together every matrix, continuation of part 1
 clc
 clear all
-city = 'SF';
+city = 'NYC120'; %% 
 load(strcat(city,'/Graphs.mat'));
 Binc = incidence(G_road); 
 [N_nodes,N_edges]=size(Binc);

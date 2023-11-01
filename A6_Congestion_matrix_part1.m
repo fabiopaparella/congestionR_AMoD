@@ -1,6 +1,7 @@
+%% same as A2, but stores every combination, not only the best one
 clc
 clear all
-city = 'NYC5';
+city = 'SF';
 load(strcat(city,'/Graphs.mat'));
 load(strcat(city,'/solPart_',city,'.mat'));
 Adj = adjacency(G_road);

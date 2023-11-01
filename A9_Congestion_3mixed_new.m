@@ -1,6 +1,6 @@
 clc
 clear all
-city='NYC120';
+city='NYC120'; %% NYC120 or SF
 load(strcat(city,'/Graphs.mat'));
 Adj = adjacency(G_road);
 Binc = incidence(G_road); 
@@ -108,7 +108,6 @@ for WaitingTime = [15] %in min 2 5 10 15
                         Cumul_delay2 = Cumul_delay2 + multip*gamma* (FullList(iii,2) + FullList(iii,3)) ;
                         TotGamma2 = TotGamma2 + multip*gamma;
                         Delay_cong(iii,1) = gamma;
-                        %CountGamma = [CountGamma gamma];
                     end
                     
                     
@@ -127,7 +126,6 @@ for WaitingTime = [15] %in min 2 5 10 15
                 
                 while true
                     prev = ([privateBase.Flows; solKN.Flows ; solBase.Flows]);
-%                   privateBase = opti.solve((1-PenRate)*mult*OriginalDemand,solKN.Flows+solBase.Flows);
                     opti.set_value(Demands_par, (1-PenRate)*mult*priv_demands);
                     opti.set_value(ExogT_par, solKN.Flows+solBase.Flows);
                     privateBase1 = opti.solve();

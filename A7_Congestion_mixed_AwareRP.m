@@ -7,10 +7,6 @@ Adj = adjacency(G_road);
 Binc = incidence(G_road); 
 [N_nodes,N_edges]=size(Binc);
 
-if strcmp('SF', city)
-DemandS = DemandS/24; %%daily to hourly only for SF!!!!!!!
-end
-
 OriginalDemand= full(DemandS);
 DemandS = full(DemandS);
 TotDems = sum(DemandS,'all');

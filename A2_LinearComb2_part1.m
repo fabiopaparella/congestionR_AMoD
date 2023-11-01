@@ -1,13 +1,13 @@
+%% computes all the possible ride pooling combinations 
 clc
 clear all
-city = 'SF';
+city = 'NYC120'; %%'SF' or 'NYC120'
 load(strcat(city,'/Graphs.mat'));
 load(strcat(city,'/solPart_',city,'.mat'));
 Adj = adjacency(G_road);
 Binc = incidence(G_road); 
 [N_nodes,N_edges]=size(Binc);
 
-%% Layer 2
 mkdir(strcat(city,'/L2'))
 parfor jj1=1:N_nodes %18
     sol2_LC = zeros(N_nodes*N_nodes*N_nodes,11);   %NYC
