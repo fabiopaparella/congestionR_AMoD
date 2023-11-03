@@ -27,16 +27,13 @@ multA = [1.5];
 %%
 multB = [2];
 for multiplicator = multB
-    B1=load(strcat(city,'/Congestion/Results/Mixed/solKn_Delay10Exo1','Dem',num2str(multiplicator),'.mat'));
-    C1=load(strcat(city,'/Congestion/Results/Mixed/solRP_Delay10Exo1','Dem',num2str(multiplicator),'.mat'));
-    B2=load(strcat(city,'/Congestion/Results/Mixed/solKn_Delay10Exo0.7','Dem',num2str(multiplicator),'.mat'));
-    C2=load(strcat(city,'/Congestion/Results/Mixed/solRP_Delay10Exo0.7','Dem',num2str(multiplicator),'.mat'));
-    B = [B B1.solKN.obj];
-    C = [C C1.solRP.obj];
-    BB = [BB B2.solKN.obj];
-    CC = [CC C2.solRP.obj];
-    B_eps = [B_eps B2.solKN.eps];%/max(B1.solKN.eps)];
-    C_eps = [C_eps C2.solRP.eps];%/max(C1.solRP.eps)];
+    A1=load(strcat(city,'/Congestion/Results/solKn_Delay10Exo0.7','Dem',num2str(multiplicator),'.mat'));
+    B1=load(strcat(city,'/Congestion/Results/Mixed/solKn_Delay10Exo0.7','Dem',num2str(multiplicator),'.mat'));
+    C1=load(strcat(city,'/Congestion/Results/Mixed/solRP_Delay10Exo0.7','Dem',num2str(multiplicator),'.mat'));
+   
+    A_eps = [A_eps max(0,(A1.solKN.Flows + A1.solKN.Private - Capacity' )./Capacity')];
+    B_eps = [B_eps B1.solKN.eps./Capacity'];
+    C_eps = [C_eps C1.solRP.eps./Capacity'];
     
 end
 %%
@@ -71,41 +68,39 @@ end
 % set(gca,'ticklabelinterpreter','Latex','fontsize',16,'XTick',[], 'YTick', [])
 
 %%
-figure()
-G_1 = G_road;
-B_eps_temp = B_eps(:,1);
-B_eps_temp(B_eps_temp==0)=0.000001;
-G_1.Edges.Weight = B_eps_temp./Capacity';
-A_und = adjacency(G_1,'weighted');
-G_und = graph((A_und + A_und')/2);
-pp= plot(graph(Adj),'XData',NodesLoc(:,1),'YData',NodesLoc(:,2),'LineWidth',3)
-%G_und.Edges.EdgeColors = G_und.Edges.Weight;%A_eps(:,end);
-pp.NodeLabel = [];
-pp.EdgeCData = G_und.Edges.Weight;
-colormap(flipud(copper))
-cc=colorbar('ticklabelinterpreter','Latex','fontsize',16)
-caxis([0,2.5]);
-cc.Label.String="Congestion";
-cc.Label.Interpreter = 'Latex';
-%title('Unaware Assignments, $$\phi = 0.8$$')
-grid on; box on; 
-set(gca,'ticklabelinterpreter','Latex','fontsize',16,'XTick',[], 'YTick', [])
+% figure()
+% G_1 = G_road;
+% B_eps_temp = B_eps(:,1);
+% B_eps_temp(B_eps_temp==0)=0.000001;
+% G_1.Edges.Weight = B_eps_temp./Capacity';
+% A_und = adjacency(G_1,'weighted');
+% G_und = graph((A_und + A_und')/2);
+% pp= plot(graph(Adj),'XData',NodesLoc(:,1),'YData',NodesLoc(:,2),'LineWidth',3)
+% %G_und.Edges.EdgeColors = G_und.Edges.Weight;%A_eps(:,end);
+% pp.NodeLabel = [];
+% pp.EdgeCData = G_und.Edges.Weight;
+% colormap(flipud(copper))
+% cc=colorbar('ticklabelinterpreter','Latex','fontsize',16)
+% caxis([0,3]);
+% cc.Label.String="Congestion";
+% cc.Label.Interpreter = 'Latex';
+% %title('Unaware Assignments, $$\phi = 0.8$$')
+% grid on; box on; 
+% set(gca,'ticklabelinterpreter','Latex','fontsize',16,'XTick',[], 'YTick', [])
 
 %%
 figure()
 G_1 = G_road;
-C_eps_temp = C_eps(:,1);
-C_eps_temp(C_eps_temp==0)=0.0000001;
-G_1.Edges.Weight = B_eps_temp./Capacity'-C_eps_temp./Capacity';
+C_eps(C_eps==0)=0.00000001;
+G_1.Edges.Weight = C_eps;
 A_und = adjacency(G_1,'weighted');
 G_und = graph((A_und + A_und')/2);
 pp= plot(graph(Adj),'XData',NodesLoc(:,1),'YData',NodesLoc(:,2),'LineWidth',3)
-%G_und.Edges.EdgeColors = G_und.Edges.Weight;%A_eps(:,end);
-%pp.NodeLabel = []
+pp.NodeLabel = []
 pp.EdgeCData = G_und.Edges.Weight;
 colormap(flipud(copper))
 cc=colorbar('ticklabelinterpreter','Latex','fontsize',16)
-caxis([-0.1,0.1]);
+caxis([0,2.5])
 cc.Label.String="Congestion";
 cc.Label.Interpreter = 'Latex';
 %title('Aware Assignments, $$\phi = 0.8$$')
@@ -114,15 +109,32 @@ set(gca,'ticklabelinterpreter','Latex','fontsize',16,'XTick',[], 'YTick', [])
 
 %%
 subplot(1,2,1)
-plot(B_eps_temp./Capacity'-C_eps_temp./Capacity','.','MarkerSize',15)
+boxchart(B_eps-C_eps,'BoxFaceColor', CM(1,:))
+set(gca,'ticklabelinterpreter','Latex','fontsize',16,'XTick',[])
 grid on; box on;
-ylim([-0.025,0.025])
-xlabel('Link Number')
-ylabel('Difference in Congestion')
+ylim([-0.02,0.025])
+%xlabel('Link Number')
+ylabel('Congestion Difference')
 set(gca,'ticklabelinterpreter','Latex','fontsize',16)
 subplot(1,2,2)
-boxchart(B_eps_temp'./Capacity-C_eps_temp'./Capacity,'BoxFaceColor', CM(1,:))
+boxchart(A_eps-C_eps,'BoxFaceColor', CM(1,:))
 grid on; box on;
-ylim([-0.025,0.025])
+ylim([-0.5,1.7])
+%yticklabels({''})
+set(gca,'ticklabelinterpreter','Latex','fontsize',16,'XTick',[])
+
+%%
+figure()
+subplot(1,2,1)
+plot(A_eps-C_eps,'.','MarkerSize',15,'Color', CM(1,:))
+grid on; box on;
+ylim([-0.5,2])
+xlabel('Link Number')
+%ylabel('$$\kappa$$ Unaware - $$\kappa$$ Aware')
+set(gca,'ticklabelinterpreter','Latex','fontsize',16)
+subplot(1,2,2)
+boxchart(A_eps-C_eps,'BoxFaceColor', CM(1,:))
+grid on; box on;
+ylim([-0.5,2])
 %yticklabels({''})
 set(gca,'ticklabelinterpreter','Latex','fontsize',16,'XTick',[])
